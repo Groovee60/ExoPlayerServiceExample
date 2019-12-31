@@ -2,10 +2,12 @@
 <resources>
     <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#ccc27a</color>
-    <color name="colorAccentDim">#a0ccc27a</color>
 
-    <color name="bkgd_notification">#726621</color>
+    <color name="colorAccent">#bbb</color>
+    <color name="colorAccentDim">#888</color>
+    <color name="colorAccentDark">#555</color>
+
+    <color name="bkgd_notification">@color/colorAccentDark</color>
 
     <color name="player_title">@color/colorAccent</color>
     <color name="player_subtitle">@color/colorAccentDim</color>
