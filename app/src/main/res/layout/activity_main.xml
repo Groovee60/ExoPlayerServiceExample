@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.exoplayer2.ui.PlayerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/playerView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    app:played_color="@color/colorAccent"
+    app:scrubber_color="@color/colorAccent"
+    app:buffered_color="@color/colorAccentDim"
+    app:controller_layout_id="@layout/custom_playback_control"
+    tools:ignore="Overdraw" />
+
