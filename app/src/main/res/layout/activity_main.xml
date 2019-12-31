@@ -10,6 +10,5 @@
     app:played_color="@color/colorAccent"
     app:scrubber_color="@color/colorAccent"
     app:buffered_color="@color/colorAccentDim"
-    app:controller_layout_id="@layout/custom_playback_control"
     tools:ignore="Overdraw" />
 

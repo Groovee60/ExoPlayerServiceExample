@@ -1,3 +1,7 @@
 <resources>
 
+    <dimen name="player_scrubber_label_width">60dp</dimen>
+    <dimen name="player_scrubber_ht">40dp</dimen>
+    <dimen name="player_controls_ht">40dp</dimen>
+
 </resources>

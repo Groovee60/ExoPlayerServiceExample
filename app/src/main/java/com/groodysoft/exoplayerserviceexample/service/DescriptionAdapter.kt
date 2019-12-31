@@ -13,27 +13,34 @@ import com.google.android.exoplayer2.ui.PlayerNotificationManager.MediaDescripti
 import com.groodysoft.exoplayerserviceexample.MainActivity
 import com.groodysoft.exoplayerserviceexample.MainApplication.Companion.context
 import com.groodysoft.exoplayerserviceexample.R
+import com.groodysoft.exoplayerserviceexample.SampleCatalog
 
 object DescriptionAdapter : MediaDescriptionAdapter {
 
+    var useStreamExtraction = false
+
     var currentMetadata: Metadata? = null
 
-    override fun getCurrentContentTitle(player: Player): String {
+    override fun getCurrentContentTitle(player: Player): String =
+        if (useStreamExtraction) {
+            currentMetadata?.findTextValue("TIT2")
+                ?: context.getString(R.string.default_notification_title)
+        } else {
+            val track = SampleCatalog.tracks[player.currentWindowIndex]
+            track.trackTitle
+        }
 
-        return currentMetadata?.findTextValue("TIT2")
-            ?: context.getString(R.string.default_notification_title)
-    }
+    override fun getCurrentContentText(player: Player): String =
+        if (useStreamExtraction) {
+            currentMetadata?.findTextValue("TALB")
+                ?: context.getString(R.string.default_notification_subtitle)
+        } else {
+            val track = SampleCatalog.tracks[player.currentWindowIndex]
+            track.albumTitle
+        }
 
-    override fun getCurrentContentText(player: Player): String? {
-
-        return currentMetadata?.findTextValue("TALB")
-            ?: context.getString(R.string.default_notification_subtitle)
-    }
-
-    override fun getCurrentLargeIcon(player: Player, callback: BitmapCallback): Bitmap? {
-
-        return currentMetadata?.findBitmapValue("APIC")
-    }
+    override fun getCurrentLargeIcon(player: Player, callback: BitmapCallback) = getCurrentLargeIcon()
+    fun getCurrentLargeIcon() = currentMetadata?.findBitmapValue("APIC")
 
     override fun createCurrentContentIntent(player: Player): PendingIntent? {
 

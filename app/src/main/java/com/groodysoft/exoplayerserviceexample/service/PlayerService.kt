@@ -30,13 +30,14 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.gson.reflect.TypeToken
 import com.groodysoft.exoplayerserviceexample.MainApplication
 import com.groodysoft.exoplayerserviceexample.R
+import com.groodysoft.exoplayerserviceexample.model.TrackData
 
 private val PACKAGE = MainApplication.context.packageName
 
 val ACTION_METADATA = "$PACKAGE.ACTION_METADATA"
 val NOTIFICATION_ACTION = "$PACKAGE.NOTIFICATION_ACTION"
-val SERVICE_ACTION_CONTENT_URL = "$PACKAGE.SERVICE_ACTION_CONTENT_URL"
-val SERVICE_ACTION_CONTENT_URL_LIST = "$PACKAGE.SERVICE_ACTION_CONTENT_URL_LIST"
+val SERVICE_ACTION_CONTENT_TRACK = "$PACKAGE.SERVICE_ACTION_CONTENT_TRACK"
+val SERVICE_ACTION_CONTENT_TRACK_LIST = "$PACKAGE.SERVICE_ACTION_CONTENT_TRACK_LIST"
 val SERVICE_ACTION_PLAY = "$PACKAGE.SERVICE_ACTION_PLAY"
 
 val SERVICE_EXTRA_STRING = "$PACKAGE.SERVICE_EXTRA_STRING"
@@ -102,21 +103,21 @@ class PlayerService : Service() {
         player.release()
     }
 
-    private fun buildMediaSource(url: String): MediaSource {
+    private fun buildMediaSource(track: TrackData): MediaSource {
         val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(this, userAgent)
         val mediaSourceFactory = ProgressiveMediaSource.Factory(dataSourceFactory)
-        return mediaSourceFactory.createMediaSource(Uri.parse(url))
+        return mediaSourceFactory.createMediaSource(Uri.parse(track.url))
     }
 
-    private fun buildMediaSource(urls: List<String>): MediaSource {
+    private fun buildMediaSource(tracks: List<TrackData>): MediaSource {
         // These factories are used to construct two media sources below
         val dataSourceFactory = DefaultDataSourceFactory(this, userAgent)
         val mediaSourceFactory = ProgressiveMediaSource.Factory(dataSourceFactory)
 
         val ccms = ConcatenatingMediaSource()
 
-        for (url in urls) {
-            val mediaSource = mediaSourceFactory.createMediaSource(Uri.parse(url))
+        for (track in tracks) {
+            val mediaSource = mediaSourceFactory.createMediaSource(Uri.parse(track.url))
             ccms.addMediaSource(mediaSource)
         }
 
@@ -128,15 +129,16 @@ class PlayerService : Service() {
         Log.i(logtag, intent.action!!)
         when (intent.action) {
 
-            SERVICE_ACTION_CONTENT_URL -> {
-                val url = intent.getStringExtra(SERVICE_EXTRA_STRING)
-                player.prepare(buildMediaSource(url!!), false, false)
+            SERVICE_ACTION_CONTENT_TRACK -> {
+                val jsonTrack = intent.getStringExtra(SERVICE_EXTRA_STRING)
+                val track = MainApplication.gson.fromJson(jsonTrack, TrackData::class.java)
+                player.prepare(buildMediaSource(track), false, false)
             }
-            SERVICE_ACTION_CONTENT_URL_LIST -> {
-                val type = object : TypeToken<List<String>>() {}.type
-                val jsonUrlList = intent.getStringExtra(SERVICE_EXTRA_STRING)
-                val urls: List<String> = MainApplication.gson.fromJson(jsonUrlList, type)
-                player.prepare(buildMediaSource(urls), false, false)
+            SERVICE_ACTION_CONTENT_TRACK_LIST -> {
+                val type = object : TypeToken<List<TrackData>>() {}.type
+                val jsonTrackList = intent.getStringExtra(SERVICE_EXTRA_STRING)
+                val tracks: List<TrackData> = MainApplication.gson.fromJson(jsonTrackList, type)
+                player.prepare(buildMediaSource(tracks), false, false)
             }
             SERVICE_ACTION_PLAY -> {
                 player.playWhenReady = true
