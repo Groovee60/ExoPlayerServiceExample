@@ -8,15 +8,37 @@
 
     <ImageView
         android:id="@+id/coverArtImageView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:contentDescription="@null"
-        app:layout_constraintVertical_chainStyle="spread"
+        android:adjustViewBounds="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/trackTitle"
         android:src="@drawable/album_art_placeholder" />
+
+    <!-- shuffle/repeat toggle controls -->
+
+    <ImageButton
+        android:id="@id/exo_shuffle"
+        style="@style/ExoMediaButton"
+        android:layout_width="0dp"
+        android:contentDescription="@null"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/exo_repeat_toggle"
+        app:layout_constraintTop_toBottomOf="@id/coverArtImageView"
+        android:tint="@color/colorAccent" />
+
+    <ImageButton
+        android:id="@id/exo_repeat_toggle"
+        style="@style/ExoMediaButton"
+        android:layout_width="0dp"
+        android:contentDescription="@null"
+        app:layout_constraintLeft_toRightOf="@id/exo_shuffle"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/coverArtImageView"
+        android:tint="@color/colorAccent" />
 
     <!-- titles -->
 
@@ -24,11 +46,11 @@
         android:id="@+id/trackTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="20dp"
         style="@style/Font.PlayerTitle"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/coverArtImageView" />
+        app:layout_constraintTop_toBottomOf="@id/exo_shuffle"/>
 
     <TextView
         android:id="@+id/trackSubtitle"
@@ -39,6 +61,38 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/trackTitle" />
+
+    <!-- scrubber -->
+
+    <TextView
+        android:id="@id/exo_position"
+        android:layout_width="@dimen/player_scrubber_label_width"
+        android:layout_height="@dimen/player_scrubber_ht"
+        style="@style/Font.Scrubber"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/exo_progress_placeholder"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <View
+        android:id="@id/exo_progress_placeholder"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/player_scrubber_ht"
+        app:layout_constraintLeft_toRightOf="@id/exo_position"
+        app:layout_constraintRight_toLeftOf="@id/exo_duration"
+        app:layout_constraintTop_toTopOf="@id/exo_position"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@id/exo_duration"
+        android:layout_width="@dimen/player_scrubber_label_width"
+        android:layout_height="@dimen/player_scrubber_ht"
+        style="@style/Font.Scrubber"
+        app:layout_constraintLeft_toRightOf="@id/exo_progress_placeholder"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/exo_position"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
 
     <!-- transport controls -->
 
@@ -51,7 +105,6 @@
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/exo_rew"
-        app:layout_constraintTop_toBottomOf="@id/trackSubtitle"
         app:layout_constraintBottom_toTopOf="@id/exo_position"
         android:tint="@color/colorAccent" />
 
@@ -62,30 +115,6 @@
         android:layout_height="0dp"
         android:contentDescription="@null"
         app:layout_constraintLeft_toRightOf="@id/exo_prev"
-        app:layout_constraintRight_toLeftOf="@id/exo_shuffle"
-        app:layout_constraintTop_toTopOf="@id/exo_prev"
-        app:layout_constraintBottom_toBottomOf="@id/exo_prev"
-        android:tint="@color/colorAccent" />
-
-    <ImageButton
-        android:id="@id/exo_shuffle"
-        style="@style/ExoMediaButton"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:contentDescription="@null"
-        app:layout_constraintLeft_toRightOf="@id/exo_rew"
-        app:layout_constraintRight_toLeftOf="@id/exo_repeat_toggle"
-        app:layout_constraintTop_toTopOf="@id/exo_prev"
-        app:layout_constraintBottom_toBottomOf="@id/exo_prev"
-        android:tint="@color/colorAccent" />
-
-    <ImageButton
-        android:id="@id/exo_repeat_toggle"
-        style="@style/ExoMediaButton"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:contentDescription="@null"
-        app:layout_constraintLeft_toRightOf="@id/exo_shuffle"
         app:layout_constraintRight_toLeftOf="@id/play_pause"
         app:layout_constraintTop_toTopOf="@id/exo_prev"
         app:layout_constraintBottom_toBottomOf="@id/exo_prev"
@@ -95,7 +124,7 @@
         android:id="@+id/play_pause"
         android:layout_width="@dimen/exo_media_button_width"
         android:layout_height="0dp"
-        app:layout_constraintLeft_toRightOf="@id/exo_repeat_toggle"
+        app:layout_constraintLeft_toRightOf="@id/exo_rew"
         app:layout_constraintRight_toLeftOf="@id/exo_ffwd"
         app:layout_constraintTop_toTopOf="@id/exo_prev"
         app:layout_constraintBottom_toBottomOf="@id/exo_prev">
@@ -153,37 +182,5 @@
         app:layout_constraintTop_toTopOf="@id/exo_prev"
         app:layout_constraintBottom_toBottomOf="@id/exo_prev"
         android:tint="@color/colorAccent" />
-
-    <!-- scrubber -->
-
-    <TextView
-        android:id="@id/exo_position"
-        android:layout_width="@dimen/player_scrubber_label_width"
-        android:layout_height="@dimen/player_scrubber_ht"
-        style="@style/Font.Scrubber"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/exo_progress_placeholder"
-        app:layout_constraintTop_toBottomOf="@id/exo_prev"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-    <View
-        android:id="@id/exo_progress_placeholder"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/player_scrubber_ht"
-        app:layout_constraintLeft_toRightOf="@id/exo_position"
-        app:layout_constraintRight_toLeftOf="@id/exo_duration"
-        app:layout_constraintTop_toTopOf="@id/exo_position"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-    <TextView
-        android:id="@id/exo_duration"
-        android:layout_width="@dimen/player_scrubber_label_width"
-        android:layout_height="@dimen/player_scrubber_ht"
-        style="@style/Font.Scrubber"
-        app:layout_constraintLeft_toRightOf="@id/exo_progress_placeholder"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/exo_position"
-        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

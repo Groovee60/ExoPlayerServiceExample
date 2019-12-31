@@ -51,8 +51,8 @@ class MainActivity : AppCompatActivity() {
         playerView.controllerShowTimeoutMs = 0
         playerView.controllerHideOnTouch = false
         playerView.useArtwork = false
-        playerView.setShowShuffleButton(false)
-        playerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_NONE)
+        playerView.setShowShuffleButton(true)
+        playerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL)
 
         // bind to the service whether it's already running or not
         // save a flag so we know to initialize and play the content
