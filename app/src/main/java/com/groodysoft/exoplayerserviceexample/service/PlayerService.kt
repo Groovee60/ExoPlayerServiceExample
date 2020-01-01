@@ -1,5 +1,6 @@
 package com.groodysoft.exoplayerserviceexample.service
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -44,6 +45,28 @@ val SERVICE_EXTRA_STRING = "$PACKAGE.SERVICE_EXTRA_STRING"
 
 const val FOREGROUND_SERVICE_NOTIFICATION_ID = 101
 
+fun isOreoPlus() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+
+@SuppressLint("NewApi")
+fun Context.sendServiceIntent(action: String, stringExtra: String? = null) {
+    Intent(this, PlayerService::class.java).apply {
+
+        this.action = action
+
+        if (stringExtra != null) {
+            this.putExtra(SERVICE_EXTRA_STRING, stringExtra)
+        }
+
+        try {
+            if (isOreoPlus()) {
+                startForegroundService(this)
+            } else {
+                startService(this)
+            }
+        } catch (ignored: Exception) {
+        }
+    }
+}
 
 class PlayerService : Service() {
 

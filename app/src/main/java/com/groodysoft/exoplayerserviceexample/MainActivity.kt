@@ -46,8 +46,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        DescriptionAdapter.useStreamExtraction = false
-
         playerView.controllerShowTimeoutMs = 0
         playerView.controllerHideOnTouch = false
         playerView.useArtwork = false
@@ -79,6 +77,7 @@ class MainActivity : AppCompatActivity() {
     private fun bindPlayer() {
         playerView.player = playerService?.player
         playerView.showController()
+        LocalBroadcastManager.getInstance(MainApplication.context).sendBroadcast(Intent(ACTION_METADATA))
     }
 
     private val metadataIntentFilter = IntentFilter(ACTION_METADATA)
@@ -88,7 +87,6 @@ class MainActivity : AppCompatActivity() {
 
                 playerService?.player?.let {
 
-                    DescriptionAdapter.useStreamExtraction = false //Random.nextBoolean()
                     // based on the boolean in the DescriptionAdapter, this will either
                     // extract the metadata (title, album, cover art) from the embedded
                     // ID3 tags in the HTTP stream, or load it from the local data in the
@@ -116,29 +114,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-        }
-    }
-}
-
-fun isOreoPlus() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-
-@SuppressLint("NewApi")
-fun Context.sendServiceIntent(action: String, stringExtra: String? = null) {
-    Intent(this, PlayerService::class.java).apply {
-
-        this.action = action
-
-        if (stringExtra != null) {
-            this.putExtra(SERVICE_EXTRA_STRING, stringExtra)
-        }
-
-        try {
-            if (isOreoPlus()) {
-                startForegroundService(this)
-            } else {
-                startService(this)
-            }
-        } catch (ignored: Exception) {
         }
     }
 }

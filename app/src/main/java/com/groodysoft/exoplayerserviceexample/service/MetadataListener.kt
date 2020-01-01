@@ -30,8 +30,7 @@ class MetadataListener(private val trackSelector: MappingTrackSelector?) : Analy
 
                                 // update the current metadata and send a local broadcast that it's available
                                 DescriptionAdapter.currentMetadata = metadata
-                                val intent = Intent(ACTION_METADATA)
-                                LocalBroadcastManager.getInstance(MainApplication.context).sendBroadcast(intent)
+                                LocalBroadcastManager.getInstance(MainApplication.context).sendBroadcast(Intent(ACTION_METADATA))
 
                                 logd("    Metadata [")
                                 printMetadata(metadata)
