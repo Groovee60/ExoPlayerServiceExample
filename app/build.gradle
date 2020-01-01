@@ -34,12 +34,12 @@ dependencies {
     implementation "androidx.core:core-ktx:$rootProject.ktxVersion"
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayoutVersion"
 
-    implementation "com.github.bumptech.glide:glide:$rootProject.glideVersion"
-
     implementation "com.google.android.exoplayer:exoplayer-core:$rootProject.exoplayerVersion"
     implementation "com.google.android.exoplayer:exoplayer-ui:$rootProject.exoplayerVersion"
     implementation "com.google.android.material:material:$rootProject.materialVersion"
     implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
+
+    implementation "io.coil-kt:coil:$rootProject.coilVersion"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$rootProject.kotlinVersion"
 }

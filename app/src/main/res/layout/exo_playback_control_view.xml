@@ -4,14 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- cover art -->
+    <!-- cover art
+        setting the height to 0dp in conjunction with a dimension ratio of 1:1
+        ensures that the image will always fill the square real estate -->
 
     <ImageView
         android:id="@+id/coverArtImageView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:contentDescription="@null"
-        android:adjustViewBounds="true"
+        android:adjustViewBounds="false"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

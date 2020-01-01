@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.bumptech.glide.Glide
+import coil.api.load
 import com.google.android.exoplayer2.util.RepeatModeUtil
 import com.groodysoft.exoplayerserviceexample.MainActivity.Companion.playerServiceIsBound
 import com.groodysoft.exoplayerserviceexample.service.*
@@ -88,25 +88,31 @@ class MainActivity : AppCompatActivity() {
 
                 playerService?.player?.let {
 
+                    DescriptionAdapter.useStreamExtraction = false //Random.nextBoolean()
                     // based on the boolean in the DescriptionAdapter, this will either
                     // extract the metadata (title, album, cover art) from the embedded
                     // ID3 tags in the HTTP stream, or load it from the local data in the
                     // sample catalog
                     trackTitle.text = DescriptionAdapter.getCurrentContentTitle(it)
                     trackSubtitle.text = DescriptionAdapter.getCurrentContentText(it)
-                    //DescriptionAdapter.setBitmapIntoImageView(it, coverArtImageView)
 
                     if (DescriptionAdapter.useStreamExtraction) {
 
-                        Glide.with(coverArtImageView.context)
-                            .load(DescriptionAdapter.getCurrentLargeIcon())
-                            .into(coverArtImageView)
+                        coverArtImageView.load(DescriptionAdapter.getCurrentLargeIcon()) {
+                            placeholder(R.drawable.album_art_placeholder)
+                            crossfade(true)
+                            fallback(R.drawable.album_art_placeholder)
+                            error(R.drawable.album_art_placeholder)
+                        }
                     } else {
 
                         val track = SampleCatalog.tracks[it.currentWindowIndex]
-                        Glide.with(coverArtImageView.context)
-                            .load(track.frontCoverUrl)
-                            .into(coverArtImageView)
+                        coverArtImageView.load(track.frontCoverUrl) {
+                            placeholder(R.drawable.album_art_placeholder)
+                            crossfade(true)
+                            fallback(R.drawable.album_art_placeholder)
+                            error(R.drawable.album_art_placeholder)
+                        }
                     }
                 }
             }
