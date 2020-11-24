@@ -1,8 +1,6 @@
 package com.groodysoft.exoplayerserviceexample
 
-import android.annotation.SuppressLint
 import android.content.*
-import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import androidx.appcompat.app.AppCompatActivity

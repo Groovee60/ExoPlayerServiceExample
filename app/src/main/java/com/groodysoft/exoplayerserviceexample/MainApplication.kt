@@ -11,6 +11,7 @@ class MainApplication : Application() {
 
     companion object {
         var instance: MainApplication? = null
+        var gsonInstance = Gson()
 
         val context : MainApplication
             get() {
@@ -19,7 +20,7 @@ class MainApplication : Application() {
 
         val gson : Gson
             get() {
-                return Gson()
+                return gsonInstance
             }
     }
 }
