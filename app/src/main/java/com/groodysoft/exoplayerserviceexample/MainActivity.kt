@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import coil.api.load
+import coil.load
 import com.google.android.exoplayer2.util.RepeatModeUtil
 import com.groodysoft.exoplayerserviceexample.MainActivity.Companion.playerServiceIsBound
 import com.groodysoft.exoplayerserviceexample.service.*
