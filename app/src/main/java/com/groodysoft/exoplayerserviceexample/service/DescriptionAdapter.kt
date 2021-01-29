@@ -17,7 +17,7 @@ import com.groodysoft.exoplayerserviceexample.SampleCatalog
 
 object DescriptionAdapter : MediaDescriptionAdapter {
 
-    val useStreamExtraction = false
+    const val useStreamExtraction = false
 
     var currentMetadata: Metadata? = null
 

@@ -11,7 +11,7 @@ class MainApplication : Application() {
 
     companion object {
         var instance: MainApplication? = null
-        var gsonInstance = Gson()
+        private var gsonInstance = Gson()
 
         val context : MainApplication
             get() {

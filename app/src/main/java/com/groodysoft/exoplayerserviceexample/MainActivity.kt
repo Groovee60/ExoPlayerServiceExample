@@ -3,14 +3,16 @@ package com.groodysoft.exoplayerserviceexample
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import coil.load
+import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.util.RepeatModeUtil
 import com.groodysoft.exoplayerserviceexample.MainActivity.Companion.playerServiceIsBound
+import com.groodysoft.exoplayerserviceexample.databinding.ActivityMainBinding
 import com.groodysoft.exoplayerserviceexample.service.*
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.exo_playback_control_view.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,6 +22,8 @@ class MainActivity : AppCompatActivity() {
 
     var wasPlayerServiceBound = false
     var playerService: PlayerService? = null
+
+    private lateinit var playerView: PlayerView
 
     private val playerServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName,
@@ -42,8 +46,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        playerView = binding.playerView
         playerView.controllerShowTimeoutMs = 0
         playerView.controllerHideOnTouch = false
         playerView.useArtwork = false
@@ -84,6 +91,11 @@ class MainActivity : AppCompatActivity() {
             if (ACTION_METADATA == intent.action) {
 
                 playerService?.player?.let {
+
+                    // can't sort out view binding for the ExoPlayer custom layout
+                    val trackTitle = playerView.findViewById<TextView>(R.id.trackTitle)
+                    val trackSubtitle = playerView.findViewById<TextView>(R.id.trackSubtitle)
+                    val coverArtImageView = playerView.findViewById<ImageView>(R.id.coverArtImageView)
 
                     // based on the boolean in the DescriptionAdapter, this will either
                     // extract the metadata (title, album, cover art) from the embedded
