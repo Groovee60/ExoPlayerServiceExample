@@ -11,7 +11,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.media.AudioManager
-import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -19,15 +18,11 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.gson.reflect.TypeToken
 import com.groodysoft.exoplayerserviceexample.MainApplication
 import com.groodysoft.exoplayerserviceexample.R
@@ -78,8 +73,6 @@ class PlayerService : Service() {
 
     private val binder = MyLocalBinder()
 
-    private val userAgent = "exoplayer-exoplayerserviceexample"
-
     override fun onCreate() {
         super.onCreate()
 
@@ -89,29 +82,26 @@ class PlayerService : Service() {
             .setTrackSelector(trackSelector)
             .build()
 
-        player.addAnalyticsListener(
-            MetadataListener(
-                trackSelector
-            )
-        )
+        player.addListener(PlayerEventListener())
+
         registerReceiver(audioNoisyReceiver, noisyAudioIntentFilter)
         LocalBroadcastManager.getInstance(this).registerReceiver(metadataReceiver, metadataIntentFilter)
 
         playerNotificationManager = PlayerNotificationManager(this, getChannelId(),
-            FOREGROUND_SERVICE_NOTIFICATION_ID,
-            DescriptionAdapter
+                FOREGROUND_SERVICE_NOTIFICATION_ID,
+                DescriptionAdapter
         )
         playerNotificationManager.setPlayer(player)
 
         // define notification behavior
-        playerNotificationManager.setUseNavigationActions(true)
-        playerNotificationManager.setFastForwardIncrementMs(0)
-        playerNotificationManager.setRewindIncrementMs(0)
+        //playerNotificationManager.setUseNavigationActions(true)
+        //playerNotificationManager.setFastForwardIncrementMs(0)
+        //playerNotificationManager.setRewindIncrementMs(0)
         playerNotificationManager.setUseStopAction(false)
         playerNotificationManager.setColorized(true)
         playerNotificationManager.setColor(ContextCompat.getColor(
-            MainApplication.context,
-            R.color.bkgd_notification
+                MainApplication.context,
+                R.color.bkgd_notification
         ))
         playerNotificationManager.setUsePlayPauseActions(true)
         playerNotificationManager.setUseChronometer(true)
@@ -126,27 +116,6 @@ class PlayerService : Service() {
         player.release()
     }
 
-    private fun buildMediaSource(track: TrackData): MediaSource {
-        val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(this, userAgent)
-        val mediaSourceFactory = ProgressiveMediaSource.Factory(dataSourceFactory)
-        return mediaSourceFactory.createMediaSource(Uri.parse(track.url))
-    }
-
-    private fun buildMediaSource(tracks: List<TrackData>): MediaSource {
-        // These factories are used to construct two media sources below
-        val dataSourceFactory = DefaultDataSourceFactory(this, userAgent)
-        val mediaSourceFactory = ProgressiveMediaSource.Factory(dataSourceFactory)
-
-        val ccms = ConcatenatingMediaSource()
-
-        for (track in tracks) {
-            val mediaSource = mediaSourceFactory.createMediaSource(Uri.parse(track.url))
-            ccms.addMediaSource(mediaSource)
-        }
-
-        return ccms
-}
-
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 
         Log.i(logtag, intent.action!!)
@@ -155,13 +124,29 @@ class PlayerService : Service() {
             SERVICE_ACTION_CONTENT_TRACK -> {
                 val jsonTrack = intent.getStringExtra(SERVICE_EXTRA_STRING)
                 val track = MainApplication.gson.fromJson(jsonTrack, TrackData::class.java)
-                player.prepare(buildMediaSource(track), false, false)
+
+
+                val mediaItem1 = MediaItem.fromUri(track.url)
+                player.setMediaItem(mediaItem1)
+                player.playWhenReady = false
+                player.seekTo(0, 0)
+                player.prepare()
             }
             SERVICE_ACTION_CONTENT_TRACK_LIST -> {
                 val type = object : TypeToken<List<TrackData>>() {}.type
                 val jsonTrackList = intent.getStringExtra(SERVICE_EXTRA_STRING)
                 val tracks: List<TrackData> = MainApplication.gson.fromJson(jsonTrackList, type)
-                player.prepare(buildMediaSource(tracks), false, false)
+                for ((index, track) in tracks.withIndex()) {
+                    if (index == 0) {
+                        player.setMediaItem(MediaItem.fromUri(track.url))
+                    } else {
+                        player.addMediaItem(MediaItem.fromUri(track.url))
+                    }
+                }
+
+                player.playWhenReady = false
+                player.seekTo(0, 0)
+                player.prepare()
             }
             SERVICE_ACTION_PLAY -> {
                 player.playWhenReady = true
@@ -196,7 +181,7 @@ class PlayerService : Service() {
     @Suppress("SameParameterValue")
     private fun createNotificationChannel(channelId: String, channelName: String): String{
         val chan = NotificationChannel(channelId,
-            channelName, NotificationManager.IMPORTANCE_NONE)
+                channelName, NotificationManager.IMPORTANCE_NONE)
         chan.lightColor = Color.BLUE
         chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
         val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
