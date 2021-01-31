@@ -23,8 +23,7 @@ object DescriptionAdapter : MediaDescriptionAdapter {
 
     override fun getCurrentContentTitle(player: Player): String =
         if (useStreamExtraction) {
-            currentMetadata?.findTextValue("TIT2")
-                ?: context.getString(R.string.default_notification_title)
+            currentMetadata?.findTextValue("TIT2") ?: context.getString(R.string.default_notification_title)
         } else {
             val track = SampleCatalog.tracks[player.currentWindowIndex]
             track.trackTitle
@@ -32,8 +31,7 @@ object DescriptionAdapter : MediaDescriptionAdapter {
 
     override fun getCurrentContentText(player: Player): String =
         if (useStreamExtraction) {
-            currentMetadata?.findTextValue("TALB")
-                ?: context.getString(R.string.default_notification_subtitle)
+            currentMetadata?.findTextValue("TALB") ?: context.getString(R.string.default_notification_subtitle)
         } else {
             val track = SampleCatalog.tracks[player.currentWindowIndex]
             track.albumTitle

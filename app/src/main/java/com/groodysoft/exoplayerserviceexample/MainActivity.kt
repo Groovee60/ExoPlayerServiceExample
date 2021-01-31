@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import coil.load
-import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.util.RepeatModeUtil
 import com.groodysoft.exoplayerserviceexample.MainActivity.Companion.playerServiceIsBound
 import com.groodysoft.exoplayerserviceexample.databinding.ActivityMainBinding
@@ -23,7 +22,11 @@ class MainActivity : AppCompatActivity() {
     var wasPlayerServiceBound = false
     var playerService: PlayerService? = null
 
-    private lateinit var playerView: PlayerView
+    private lateinit var playerView: com.google.android.exoplayer2.ui.PlayerControlView
+
+    private lateinit var trackTitle: TextView
+    private lateinit var trackSubtitle: TextView
+    private lateinit var coverArtImageView: ImageView
 
     private val playerServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName,
@@ -51,11 +54,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         playerView = binding.playerView
-        playerView.controllerShowTimeoutMs = 0
-        playerView.controllerHideOnTouch = false
-        playerView.useArtwork = false
-        playerView.setShowShuffleButton(true)
-        playerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL)
+        playerView.showTimeoutMs = 0
+        playerView.showShuffleButton = true
+        playerView.repeatToggleModes = RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL
+
+        // can't sort out view binding for the ExoPlayer custom layout
+        trackTitle = playerView.findViewById(R.id.trackTitle)
+        trackSubtitle = playerView.findViewById(R.id.trackSubtitle)
+        coverArtImageView = playerView.findViewById(R.id.coverArtImageView)
 
         // bind to the service whether it's already running or not
         // save a flag so we know to initialize and play the content
@@ -81,47 +87,47 @@ class MainActivity : AppCompatActivity() {
 
     private fun bindPlayer() {
         playerView.player = playerService?.player
-        playerView.showController()
-        LocalBroadcastManager.getInstance(MainApplication.context).sendBroadcast(Intent(ACTION_METADATA))
+        playerView.show()
+        showMetadata()
     }
 
     private val metadataIntentFilter = IntentFilter(ACTION_METADATA)
     private val metadataReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (ACTION_METADATA == intent.action) {
+                showMetadata()
+            }
+        }
+    }
 
-                playerService?.player?.let {
+    private fun showMetadata() {
 
-                    // can't sort out view binding for the ExoPlayer custom layout
-                    val trackTitle = playerView.findViewById<TextView>(R.id.trackTitle)
-                    val trackSubtitle = playerView.findViewById<TextView>(R.id.trackSubtitle)
-                    val coverArtImageView = playerView.findViewById<ImageView>(R.id.coverArtImageView)
+        playerService?.player?.let {
 
-                    // based on the boolean in the DescriptionAdapter, this will either
-                    // extract the metadata (title, album, cover art) from the embedded
-                    // ID3 tags in the HTTP stream, or load it from the local data in the
-                    // sample catalog
-                    trackTitle.text = DescriptionAdapter.getCurrentContentTitle(it)
-                    trackSubtitle.text = DescriptionAdapter.getCurrentContentText(it)
+            // based on the boolean in the DescriptionAdapter, this will either
+            // extract the metadata (title, album, cover art) from the embedded
+            // ID3 tags in the HTTP stream, or load it from the local data in the
+            // sample catalog
 
-                    if (DescriptionAdapter.useStreamExtraction) {
+            trackTitle.text = DescriptionAdapter.getCurrentContentTitle(it)
+            trackSubtitle.text = DescriptionAdapter.getCurrentContentText(it)
 
-                        coverArtImageView.load(DescriptionAdapter.getCurrentLargeIcon()) {
-                            placeholder(R.drawable.album_art_placeholder)
-                            crossfade(true)
-                            fallback(R.drawable.album_art_placeholder)
-                            error(R.drawable.album_art_placeholder)
-                        }
-                    } else {
+            if (DescriptionAdapter.useStreamExtraction) {
 
-                        val track = SampleCatalog.tracks[it.currentWindowIndex]
-                        coverArtImageView.load(track.frontCoverUrl) {
-                            placeholder(R.drawable.album_art_placeholder)
-                            crossfade(true)
-                            fallback(R.drawable.album_art_placeholder)
-                            error(R.drawable.album_art_placeholder)
-                        }
-                    }
+                coverArtImageView.load(DescriptionAdapter.getCurrentLargeIcon()) {
+                    placeholder(R.drawable.album_art_placeholder)
+                    crossfade(true)
+                    fallback(R.drawable.album_art_placeholder)
+                    error(R.drawable.album_art_placeholder)
+                }
+            } else {
+
+                val track = SampleCatalog.tracks[it.currentWindowIndex]
+                coverArtImageView.load(track.frontCoverUrl) {
+                    placeholder(R.drawable.album_art_placeholder)
+                    crossfade(true)
+                    fallback(R.drawable.album_art_placeholder)
+                    error(R.drawable.album_art_placeholder)
                 }
             }
         }
