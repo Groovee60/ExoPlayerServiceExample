@@ -16,6 +16,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.exoplayer2.MediaItem
@@ -35,6 +36,7 @@ val NOTIFICATION_ACTION = "$PACKAGE.NOTIFICATION_ACTION"
 val SERVICE_ACTION_CONTENT_TRACK = "$PACKAGE.SERVICE_ACTION_CONTENT_TRACK"
 val SERVICE_ACTION_CONTENT_TRACK_LIST = "$PACKAGE.SERVICE_ACTION_CONTENT_TRACK_LIST"
 val SERVICE_ACTION_PLAY = "$PACKAGE.SERVICE_ACTION_PLAY"
+val SERVICE_ACTION_START = "$PACKAGE.SERVICE_ACTION_START"
 
 val SERVICE_EXTRA_STRING = "$PACKAGE.SERVICE_EXTRA_STRING"
 
@@ -50,15 +52,14 @@ fun Context.sendServiceIntent(action: String, stringExtra: String? = null) {
 
         if (stringExtra != null) {
             this.putExtra(SERVICE_EXTRA_STRING, stringExtra)
-        }
+            startService(this)
+        } else {
 
-        try {
             if (isOreoPlus()) {
                 startForegroundService(this)
             } else {
                 startService(this)
             }
-        } catch (ignored: Exception) {
         }
     }
 }
@@ -76,20 +77,26 @@ class PlayerService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        val trackSelector = DefaultTrackSelector( /* context= */this, AdaptiveTrackSelection.Factory())
+        val trackSelector = DefaultTrackSelector( /* context= */this,
+            AdaptiveTrackSelection.Factory()
+        )
 
-        player = SimpleExoPlayer.Builder( /* context= */this)
+        player = SimpleExoPlayer.Builder(this)
             .setTrackSelector(trackSelector)
             .build()
 
         player.addListener(PlayerEventListener())
 
         registerReceiver(audioNoisyReceiver, noisyAudioIntentFilter)
-        LocalBroadcastManager.getInstance(this).registerReceiver(metadataReceiver, metadataIntentFilter)
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            metadataReceiver,
+            metadataIntentFilter
+        )
 
-        playerNotificationManager = PlayerNotificationManager(this, getChannelId(),
-                FOREGROUND_SERVICE_NOTIFICATION_ID,
-                DescriptionAdapter
+        playerNotificationManager = PlayerNotificationManager(
+            this, getChannelId(),
+            FOREGROUND_SERVICE_NOTIFICATION_ID,
+            DescriptionAdapter
         )
         playerNotificationManager.setPlayer(player)
 
@@ -99,10 +106,12 @@ class PlayerService : Service() {
         //playerNotificationManager.setRewindIncrementMs(0)
         playerNotificationManager.setUseStopAction(false)
         playerNotificationManager.setColorized(true)
-        playerNotificationManager.setColor(ContextCompat.getColor(
+        playerNotificationManager.setColor(
+            ContextCompat.getColor(
                 MainApplication.context,
                 R.color.bkgd_notification
-        ))
+            )
+        )
         playerNotificationManager.setUsePlayPauseActions(true)
         playerNotificationManager.setUseChronometer(true)
     }
@@ -151,6 +160,10 @@ class PlayerService : Service() {
             SERVICE_ACTION_PLAY -> {
                 player.playWhenReady = true
             }
+            SERVICE_ACTION_START -> {
+                val notification = NotificationCompat.Builder(MainApplication.context, getChannelId()).build()
+                this.startForeground(FOREGROUND_SERVICE_NOTIFICATION_ID, notification)
+            }
         }
 
         return START_NOT_STICKY
@@ -180,8 +193,10 @@ class PlayerService : Service() {
     @RequiresApi(Build.VERSION_CODES.O)
     @Suppress("SameParameterValue")
     private fun createNotificationChannel(channelId: String, channelName: String): String{
-        val chan = NotificationChannel(channelId,
-                channelName, NotificationManager.IMPORTANCE_NONE)
+        val chan = NotificationChannel(
+            channelId,
+            channelName, NotificationManager.IMPORTANCE_NONE
+        )
         chan.lightColor = Color.BLUE
         chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
         val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

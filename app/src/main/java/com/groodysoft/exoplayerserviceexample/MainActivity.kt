@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
             bindPlayer()
 
             if (!wasPlayerServiceBound) {
+                sendServiceIntent(SERVICE_ACTION_START)
                 sendServiceIntent(SERVICE_ACTION_CONTENT_TRACK_LIST, MainApplication.gson.toJson(SampleCatalog.tracks))
                 sendServiceIntent(SERVICE_ACTION_PLAY)
             }
