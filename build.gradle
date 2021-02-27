@@ -6,7 +6,7 @@ buildscript {
         targetSdkVersion = 28
 
         gradleVersion = '4.1.2'
-        kotlinVersion = '1.4.21'
+        kotlinVersion = '1.4.31'
         ktlintVersion = '0.30.0'
 
     }

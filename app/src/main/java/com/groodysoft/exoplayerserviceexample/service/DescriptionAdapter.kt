@@ -19,7 +19,7 @@ object DescriptionAdapter : MediaDescriptionAdapter {
 
     const val useStreamExtraction = false
 
-    var currentMetadata: Metadata? = null
+    private var currentMetadata: Metadata? = null
 
     override fun getCurrentContentTitle(player: Player): String =
         if (useStreamExtraction) {

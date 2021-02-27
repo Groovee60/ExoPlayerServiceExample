@@ -1,3 +1,5 @@
+# Spec Heading
+
 Google's ExoPlayer library is a tremendous alternative to MediaPlayer on the Android platform. I have read that ExoPlayer music applications have increased battery usage over those using MediaPlayer, but the plethora of other benefits more than outweighs this for me. And of course Google may improve the battery usage in subsequent versions of the library.
 
 Building a simple music player using ExoPlayer is a trivial exercise. See their blog and online documentation. Building out a proper music service (to support background playing when the activity is destroyed, and foreground notification support) is a bit more effort, but this project provides a very streamlined Kotlin implementation with (hopefully) best practices demonstrated.
@@ -10,5 +12,5 @@ If my hosted files disappear over time for whatever reason, it is a trivial chan
 
 ExoPlayer supports many (most?) video formats in addition to streaming music. See their publicly available Github repositories for the library modules and much more elaborate sample implementations. But of the many that I have cloned, built, and examined, none demonstrate a proper and simple persistent service integration.
 
-Please provide any feedback or pull requests toward the goal of improving and/or updatying this simple example. And please pay it forward where appropriate by posting your own repositories of higher level functionality built upon this simple architecture.
+Please provide any feedback or pull requests toward the goal of improving and/or updating this simple example. And please pay it forward where appropriate by posting your own repositories of higher level functionality built upon this simple architecture.
 
