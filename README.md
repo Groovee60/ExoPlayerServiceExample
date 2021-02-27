@@ -1,4 +1,4 @@
-# Spec Heading
+# ExoPlayerServiceExample
 
 Google's ExoPlayer library is a tremendous alternative to MediaPlayer on the Android platform. I have read that ExoPlayer music applications have increased battery usage over those using MediaPlayer, but the plethora of other benefits more than outweighs this for me. And of course Google may improve the battery usage in subsequent versions of the library.
 
