@@ -99,35 +99,7 @@ class PlayerService : Service() {
 
 
         playerNotification = PlayerNotificationManager.Builder(this,
-            FOREGROUND_SERVICE_NOTIFICATION_ID, getChannelId(), object :PlayerNotificationManager.MediaDescriptionAdapter{
-
-                override fun getCurrentContentTitle(player: Player): CharSequence {
-                  return  ""
-                }
-
-                override fun createCurrentContentIntent(player: Player): PendingIntent? {
-                    val intent = Intent(applicationContext, MainActivity::class.java);
-                    return PendingIntent.getActivity(
-                        applicationContext, 0, intent,
-                        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-                    )
-                }
-
-                override fun getCurrentContentText(player: Player): CharSequence? {
-                   return ""
-                }
-
-                override fun getCurrentSubText(player: Player): CharSequence? {
-                    return super.getCurrentSubText(player)
-                }
-
-                override fun getCurrentLargeIcon(
-                    player: Player,
-                    callback: PlayerNotificationManager.BitmapCallback
-                ): Bitmap? {
-                    return BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_foreground)
-                }
-            })
+            FOREGROUND_SERVICE_NOTIFICATION_ID, getChannelId(), DescriptionAdapter)
         playerNotificationManager = playerNotification.build()
         playerNotificationManager.setPlayer(player)
 
