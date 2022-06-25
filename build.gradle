@@ -1,24 +1,13 @@
 buildscript {
-    ext {
-        // Sdk and tools
-        compileSdkVersion = 28
-        minSdkVersion = 21
-        targetSdkVersion = 28
-
-        gradleVersion = '4.1.2'
-        kotlinVersion = '1.4.31'
-        ktlintVersion = '0.30.0'
-
-    }
-
+    ext.kotlin_version = "1.6.10"
     repositories {
         google()
         jcenter()
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:$gradleVersion"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath 'com.android.tools.build:gradle:7.2.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -36,6 +25,6 @@ allprojects {
 spotless {
     kotlin {
         target "**/*.kt"
-        ktlint(ktlintVersion)
+        ktlint(kotlin_version)
     }
 }

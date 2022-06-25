@@ -1,14 +1,14 @@
 package com.groodysoft.exoplayerserviceexample.service
 
+import PlayerEventListener
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.media.AudioManager
 import android.os.Binder
@@ -20,11 +20,13 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.gson.reflect.TypeToken
+import com.groodysoft.exoplayerserviceexample.MainActivity
 import com.groodysoft.exoplayerserviceexample.MainApplication
 import com.groodysoft.exoplayerserviceexample.R
 import com.groodysoft.exoplayerserviceexample.model.TrackData
@@ -71,6 +73,7 @@ class PlayerService : Service() {
     lateinit var player: SimpleExoPlayer
 
     private lateinit var playerNotificationManager: PlayerNotificationManager
+    private lateinit var playerNotification: PlayerNotificationManager.Builder
 
     private val binder = MyLocalBinder()
 
@@ -93,11 +96,11 @@ class PlayerService : Service() {
             metadataIntentFilter
         )
 
-        playerNotificationManager = PlayerNotificationManager(
-            this, getChannelId(),
-            FOREGROUND_SERVICE_NOTIFICATION_ID,
-            DescriptionAdapter
-        )
+
+
+        playerNotification = PlayerNotificationManager.Builder(this,
+            FOREGROUND_SERVICE_NOTIFICATION_ID, getChannelId(), DescriptionAdapter)
+        playerNotificationManager = playerNotification.build()
         playerNotificationManager.setPlayer(player)
 
         // define notification behavior

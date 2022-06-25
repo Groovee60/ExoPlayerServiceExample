@@ -44,7 +44,7 @@ object DescriptionAdapter : MediaDescriptionAdapter {
 
         val notificationIntent = Intent(context, MainActivity::class.java)
         notificationIntent.action = NOTIFICATION_ACTION
-        return PendingIntent.getActivity(context, 0, notificationIntent, 0)
+        return PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
 
     private fun Metadata.findTextValue(key: String): String {

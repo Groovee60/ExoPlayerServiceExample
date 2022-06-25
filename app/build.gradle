@@ -3,14 +3,18 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion rootProject.compileSdkVersion
+    compileSdkVersion 32
+
     defaultConfig {
         applicationId "com.groodysoft.exoplayerserviceexample"
-        minSdkVersion rootProject.minSdkVersion
-        targetSdkVersion rootProject.targetSdkVersion
+        minSdkVersion 21
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+
     buildTypes {
         release {
             minifyEnabled false
@@ -33,27 +37,15 @@ android {
 }
 
 dependencies {
-
-    def coilVersion = '1.1.0'
-    def constraintLayoutVersion = '2.1.0-alpha2'
-    def exoplayerVersion = '2.12.3'
-    def gsonVersion = '2.8.6'
-    def ktxVersion = '1.3.2'
-    def localBroadcastManaagerVersion = '1.0.0'
-    def materialVersion = '1.3.0'
-    def supportLibraryVersion = '1.3.0-beta01'
-
-    implementation "androidx.appcompat:appcompat:$supportLibraryVersion"
-    implementation "androidx.core:core-ktx:$ktxVersion"
-    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
-    implementation "androidx.localbroadcastmanager:localbroadcastmanager:$localBroadcastManaagerVersion"
-
-    implementation "com.google.android.exoplayer:exoplayer-core:$exoplayerVersion"
-    implementation "com.google.android.exoplayer:exoplayer-ui:$exoplayerVersion"
-    implementation "com.google.android.material:material:$materialVersion"
-    implementation "com.google.code.gson:gson:$gsonVersion"
-
-    implementation "io.coil-kt:coil:$coilVersion"
-
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$rootProject.kotlinVersion"
+    implementation "androidx.appcompat:appcompat:1.4.2"
+    implementation "androidx.core:core-ktx:1.8.0"
+    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+    implementation "androidx.localbroadcastmanager:localbroadcastmanager:1.1.0"
+    implementation "com.google.android.exoplayer:exoplayer-core:2.17.1"
+    implementation "com.google.android.exoplayer:exoplayer-ui:2.17.1"
+    implementation "com.google.android.material:material:1.6.1"
+    implementation "com.google.code.gson:gson:2.8.9"
+    implementation "io.coil-kt:coil:2.1.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.1.2'
 }
