@@ -12,6 +12,9 @@ import com.google.android.exoplayer2.util.RepeatModeUtil
 import com.groodysoft.exoplayerserviceexample.MainActivity.Companion.playerServiceIsBound
 import com.groodysoft.exoplayerserviceexample.databinding.ActivityMainBinding
 import com.groodysoft.exoplayerserviceexample.service.*
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var trackSubtitle: TextView
     private lateinit var coverArtImageView: ImageView
 
+    @OptIn(ExperimentalSerializationApi::class)
     private val playerServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName,
                                         service: IBinder) {
@@ -38,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
             if (!wasPlayerServiceBound) {
                 sendServiceIntent(SERVICE_ACTION_START)
-                sendServiceIntent(SERVICE_ACTION_CONTENT_TRACK_LIST, MainApplication.gson.toJson(SampleCatalog.tracks))
+                sendServiceIntent(SERVICE_ACTION_CONTENT_TRACK_LIST, Json.encodeToString(SampleCatalog.tracks))
                 sendServiceIntent(SERVICE_ACTION_PLAY)
             }
         }

@@ -2,13 +2,14 @@ package com.groodysoft.exoplayerserviceexample.service
 
 import PlayerEventListener
 import android.annotation.SuppressLint
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.media.AudioManager
 import android.os.Binder
@@ -20,16 +21,16 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import com.google.gson.reflect.TypeToken
-import com.groodysoft.exoplayerserviceexample.MainActivity
 import com.groodysoft.exoplayerserviceexample.MainApplication
 import com.groodysoft.exoplayerserviceexample.R
 import com.groodysoft.exoplayerserviceexample.model.TrackData
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 private val PACKAGE = MainApplication.context.packageName
 
@@ -128,6 +129,7 @@ class PlayerService : Service() {
         player.release()
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 
         Log.i(logtag, intent.action!!)
@@ -135,8 +137,7 @@ class PlayerService : Service() {
 
             SERVICE_ACTION_CONTENT_TRACK -> {
                 val jsonTrack = intent.getStringExtra(SERVICE_EXTRA_STRING)
-                val track = MainApplication.gson.fromJson(jsonTrack, TrackData::class.java)
-
+                val track = Json.decodeFromString<TrackData>(jsonTrack!!)
 
                 val mediaItem1 = MediaItem.fromUri(track.url)
                 player.setMediaItem(mediaItem1)
@@ -145,9 +146,8 @@ class PlayerService : Service() {
                 player.prepare()
             }
             SERVICE_ACTION_CONTENT_TRACK_LIST -> {
-                val type = object : TypeToken<List<TrackData>>() {}.type
                 val jsonTrackList = intent.getStringExtra(SERVICE_EXTRA_STRING)
-                val tracks: List<TrackData> = MainApplication.gson.fromJson(jsonTrackList, type)
+                val tracks = Json.decodeFromString<List<TrackData>>(jsonTrackList!!)
                 for ((index, track) in tracks.withIndex()) {
                     if (index == 0) {
                         player.setMediaItem(MediaItem.fromUri(track.url))
